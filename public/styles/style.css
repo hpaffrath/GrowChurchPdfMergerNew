@@ -1,0 +1,15 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .dropdown-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  select {
+    width: 300px;
+  }
+  

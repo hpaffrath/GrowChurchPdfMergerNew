@@ -2,14 +2,19 @@ require("dotenv").config();
 const express = require("express");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const cookieSession = require("cookie-session");
 const expressSession = require("express-session")
 const { google } = require("googleapis");
 const { createLogger, format, transports} = require("winston")
+const leader = require ("./leaders.json");
 
 const app = express();
 
+app.use(express.static("data"));
+
+
+
 // Middleware
+app.use(express.static("public"));
 app.use(
     expressSession({
         secret: process.env.SESSION_SECRET || "default_secret_key",
@@ -46,14 +51,7 @@ passport.deserializeUser((user, done) => {
   done(null, user);
 });
 
-// Middleware
-// app.use(
-//   cookieSession({
-//     name: "session",
-//     keys: [process.env.SESSION_SECRET || "default_secret_key"],
-//     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-//   })
-// );
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -78,12 +76,66 @@ const getDriveFiles = async (accessToken) => {
 // Routes
 app.get("/", (req, res) => {
   res.send(`
-    <h1>Welcome to Google Auth App</h1>
-    ${req.isAuthenticated() ? `<p>Hello, ${req.user.profile.displayName}</p>` : `<a href="/auth/google">Login with Google</a>`}
-    ${req.isAuthenticated() ? `<a href="/logout">Logout</a>` : ""}
-    ${req.isAuthenticated() ? `<a href="/drive">View Google Drive Files</a>` : ""}
+     <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Google Auth App</title>
+      <link rel="stylesheet" href="/styles/style.css">
+    </head>
+    <body>
+    <h1>Grow Church PDF Merger</h1>
+    ${req.isAuthenticated() 
+      ? `<p>Select a Worship Leader</p>
+          <div>
+          <select name="leader" id="leader">
+             ${leader.data.map((item) => `<option value="${item.leader}">${item.leader}</option>`).join('')}
+           </select>
+        </div>
+
+
+
+        <a href="/drive">View Google Drive Files</a>
+         <div>
+         <form action="/logout" method="get" style="display: inline;">
+           <button type="submit" style="
+             background-color: #4285F4; 
+             color: white; 
+             border: none; 
+             padding: 10px 20px; 
+             text-align: center; 
+             text-decoration: none; 
+             display: inline-block; 
+             font-size: 16px; 
+             border-radius: 5px; 
+             cursor: pointer;">
+             Logout
+           </button>
+         </form>
+         </div>` 
+      : `<form action="/auth/google" method="get" style="display: inline;">
+           <button type="submit" style="
+             background-color: #4285F4; 
+             color: white; 
+             border: none; 
+             padding: 10px 20px; 
+             text-align: center; 
+             text-decoration: none; 
+             display: inline-block; 
+             font-size: 16px; 
+             border-radius: 5px; 
+             cursor: pointer;">
+             Login with Google
+           </button>
+         </form>`
+    }
+        </body>
+    </html>
   `);
 });
+
+
 
 app.get(
   "/auth/google",
