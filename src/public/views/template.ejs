@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PDF Merger</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width-device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/css/styles.css" />
+<script>
+    function submitSelectedLeader() {
+        const dropdown = document.getElementById('leaderDropdown');
+        dropdown.addEventListener('change', function() {
+            dropdown.form.submit();
+        });
+    }
+    document.addEventListener('DOMContentLoaded', submitSelectedLeader);
+
+    function addSongList(){
+        const addSongList = document.getElementById('addButton');
+        addSongList.addEventListener('click', function() {
+            addSongList.form.submit();
+        });
+    }
+
+    function showSongDropdown() {
+        const songDropdownContainer = document.getElementById('songDropdownContainer');
+        if (songDropdownContainer) {
+            songDropdownContainer.style.display = 'block';
+        }
+    }
+</script>
+
+</head>
+<body>
+        <h1>PDF Merger</h1>
+        <% if(!data.authorized){ %>
+        <form action="/auth/google" method="get">
+            <input type="submit" value="Authorize" />
+        </form>
+        <% } %>
+        <% if(data.authorized){ %>
+            <form action="/logout" method="get">
+                <input type="submit" value="Logout" />
+            </form>            
+            <div id="dropdownContainer" style="display: inline">
+            <p>Select Leader</p>
+            <form action="/selectLeader" method="POST">
+                <select name="selectedLeader" id="leaderDropdown">
+                    <% data.leaders.forEach(leader => { %>
+                        <option 
+                        value="<%= leader.folderId %>" 
+                        <%= data.selectedLeader === leader.folderId ? 'selected' : '' %>>
+                        <%= leader.leader %>
+                    </option>
+                    <% }) %>
+                </select>
+            </form>
+        </div>
+
+        <% if(data.selectedLeader){ %>
+            <br/>
+            <div class="button-container">
+                <form action="/addSongList" method="POST">
+                    <button type="submit" id="addButton">Add</button>
+                </form>
+                <form action="/removeSongList" method="POST">
+                    <button type="submit" id="removeButton">Remove</button>
+                </form>
+            </div>
+            <% for (let i = 0; i < data.songsListCount; i++) { %>
+            <!-- Show song dropdown only if songsList is populated -->
+            <% if(data.songsList && data.songsList.length > 0) { %>
+                <br/>
+            <div id="songDropdownContainer" style="display:block;">
+                <!-- Ensure the action is targeting '/selectedSong' -->
+                <form action="/selectedSong" method="POST" id="songForm<%= i %>">
+                    <select name="selectedSong" id="selectedSong<%= i %>" onchange="document.getElementById('songForm<%= i %>').submit()">
+                        <option>Select a song</option>
+                        <% data.songsList.forEach(song => { %>
+                            <option value="<%= song.location %>"
+                                <% if (data.selectedSongs && data.selectedSongs[i] && data.selectedSongs[i] === song.location) { %> 
+                                    selected 
+                                <% } %>
+                            >
+                                <%= song.song %>
+                            </option>
+                        <% }) %>
+                    </select>
+                    <input type="hidden" name="songIndex" value="<%= i %>" />
+                </form>
+            </div>
+            <% } %>
+            <% } %>
+            <br/>
+            <form action="/merge" method="POST">
+                <button type="submit" id="mergeButton" style="display:block">Merge</button>
+            </form>
+            
+        <% } %>
+        <% } %>
+</body>
+</html>
