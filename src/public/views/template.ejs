@@ -34,12 +34,16 @@
         <h1>PDF Merger</h1>
         <% if(!data.authorized){ %>
         <form action="/auth/google" method="get">
-            <input type="submit" value="Authorize" />
+            <div class="button-container">
+                <button type="submit" value="Authorize" >Login</button>
+            </div>
         </form>
         <% } %>
         <% if(data.authorized){ %>
             <form action="/logout" method="get">
-                <input type="submit" value="Logout" />
+                <div class="button-container">
+                    <button type="submit" value="Logout">Logout</button>
+                </div>
             </form>            
             <div id="dropdownContainer" style="display: inline">
             <p>Select Leader</p>
