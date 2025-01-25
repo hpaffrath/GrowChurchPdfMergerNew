@@ -21,12 +21,14 @@ select {
 button {
     padding: 5px 10px;
     font-size: 14px;
+    color: white;
     cursor: pointer;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #4FC3F7;
+    background-color: #1C72EB;
 }
 
 button:hover {
     background-color: #e0e0e0;
+    color: black;
 }
