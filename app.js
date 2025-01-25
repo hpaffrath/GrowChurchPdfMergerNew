@@ -200,7 +200,9 @@ async function listFilesInFolder(accessToken, folderId) {
       .map(file => ({
         song: file.name,
         location: `https://drive.google.com/file/d/${file.id}/view?usp=sharing`,
-      }));
+      }))
+      .sort((a, b) => a.song.localeCompare(b.song)); // Sort songs alphabetically by name
+      ;
       return songs;
     } else {
       console.log('No files found.');
