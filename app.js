@@ -189,14 +189,13 @@ async function listFilesInFolder(accessToken, folderId) {
   const drive = google.drive({ version: 'v3', auth });
   try {
     const response = await drive.files.list({
-      q: `'${folderId}' in parents and trashed = false`,
+      q: `'${folderId}' in parents and mimeType = 'application/pdf' and trashed = false`,
       fields: 'files(id, name)',
     });
 
     const files = response.data.files;
     if (files && files.length > 0) {
       const songs = files
-      .filter(file => file.name.toLowerCase().endsWith('.pdf')) // Filter only PDF files
       .map(file => ({
         song: file.name,
         location: `https://drive.google.com/file/d/${file.id}/view?usp=sharing`,
