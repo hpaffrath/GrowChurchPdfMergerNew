@@ -11,7 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "@googleapis/drive": "^8.14.0",
-    "@microsoft/microsoft-graph-client": "^3.0.7",
     "axios": "^1.7.9",
     "body-parser": "^1.20.3",
     "dotenv": "^16.4.7",
@@ -22,7 +21,6 @@
     "nodemon": "^3.1.9",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
-    "passport-microsoft": "^2.1.0",
     "pdf-lib": "^1.17.1",
     "picocolors": "^1.1.1"
   }
